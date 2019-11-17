@@ -1,12 +1,12 @@
-/**
- * 
- */
 package in.fhir;
 
-/**
- * @author shangan
- *
- */
 public interface FhirInterface {
+
+	void getPatientDetail();
+
+	void getPractitionerDetail();
+
+	void getPatientResourceDetail(String PatientID, String bundle);
+
 
 }

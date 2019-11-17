@@ -1,5 +1,98 @@
 package in.fhir;
 
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;
+import ca.uhn.fhir.model.dstu2.resource.Appointment;
+import ca.uhn.fhir.model.dstu2.resource.Bundle;
+import ca.uhn.fhir.model.dstu2.resource.Condition;
+import ca.uhn.fhir.model.dstu2.resource.DiagnosticReport;
+import ca.uhn.fhir.model.dstu2.resource.DocumentReference;
+import ca.uhn.fhir.model.dstu2.resource.Encounter;
+import ca.uhn.fhir.model.dstu2.resource.Immunization;
+import ca.uhn.fhir.model.dstu2.resource.MedicationOrder;
+import ca.uhn.fhir.model.dstu2.resource.Observation;
+import ca.uhn.fhir.parser.IParser;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
+
 public class Dstu2 implements FhirInterface {
+
+	static IGenericClient client;
+	static FhirContext ctx;
+	static IParser jsonParser = ctx.newJsonParser();
+
+	public Dstu2(String serverBase, String username, String password) {
+		ctx = FhirContext.forDstu2();
+		client = ctx.newRestfulGenericClient(serverBase);
+		BasicAuthInterceptor AuthInterceptor = HTTPBasicAuthorization(username, password);
+		client.registerInterceptor(AuthInterceptor);
+		jsonParser.setPrettyPrint(true);
+
+	}
+
+	private static BasicAuthInterceptor HTTPBasicAuthorization(String username, String password) {
+		BasicAuthInterceptor authInterceptor = new BasicAuthInterceptor(username, password);
+		return authInterceptor;
+
+	}
+
+	@Override
+	public void getPatientDetail() {
+
+	}
+
+	@Override
+	public void getPractitionerDetail() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void getPatientResourceDetail(String PatientID, String bundle) {
+		Bundle results = null;
+		switch (bundle) {
+		case "AllergyIntolerance":
+			results = client.search().forResource(AllergyIntolerance.class)
+					.where(AllergyIntolerance.PATIENT.hasId(PatientID))
+					.returnBundle(ca.uhn.fhir.model.dstu2.resource.Bundle.class).execute();
+			break;
+		case "Appointment":
+			results = client.search().forResource(Appointment.class).where(Appointment.PATIENT.hasId(PatientID))
+					.returnBundle(ca.uhn.fhir.model.dstu2.resource.Bundle.class).execute();
+			break;
+		case "Condition":
+			results = client.search().forResource(Condition.class).where(Condition.PATIENT.hasId(PatientID))
+					.returnBundle(ca.uhn.fhir.model.dstu2.resource.Bundle.class).execute();
+			break;
+		case "DiagnosticReport":
+			results = client.search().forResource(DiagnosticReport.class)
+					.where(DiagnosticReport.PATIENT.hasId(PatientID))
+					.returnBundle(ca.uhn.fhir.model.dstu2.resource.Bundle.class).execute();
+			break;
+		case "DocumentReference":
+			results = client.search().forResource(DocumentReference.class)
+					.where(DocumentReference.PATIENT.hasId(PatientID))
+					.returnBundle(ca.uhn.fhir.model.dstu2.resource.Bundle.class).execute();
+			break;
+		case "Encounter":
+			results = client.search().forResource(Encounter.class).where(Encounter.PATIENT.hasId(PatientID))
+					.returnBundle(ca.uhn.fhir.model.dstu2.resource.Bundle.class).execute();
+			break;
+		case "Immunization":
+			results = client.search().forResource(Immunization.class).where(Immunization.PATIENT.hasId(PatientID))
+					.returnBundle(ca.uhn.fhir.model.dstu2.resource.Bundle.class).execute();
+			break;
+		case "MedicationOrder":
+			results = client.search().forResource(MedicationOrder.class).where(MedicationOrder.PATIENT.hasId(PatientID))
+					.returnBundle(ca.uhn.fhir.model.dstu2.resource.Bundle.class).execute();
+			break;
+		case "Observation":
+			results = client.search().forResource(Observation.class).where(Observation.PATIENT.hasId(PatientID))
+					.returnBundle(ca.uhn.fhir.model.dstu2.resource.Bundle.class).execute();
+			break;
+		}
+		System.out.println("Total " + bundle + " = " + results.getEntry().size());
+	
+	}
 
 }
