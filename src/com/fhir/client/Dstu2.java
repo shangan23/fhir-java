@@ -1,4 +1,4 @@
-package com.fhir;
+package com.fhir.client;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.dstu2.resource.AllergyIntolerance;

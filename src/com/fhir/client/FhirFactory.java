@@ -1,4 +1,4 @@
-package com.fhir;
+package com.fhir.client;
 
 public class FhirFactory {
 

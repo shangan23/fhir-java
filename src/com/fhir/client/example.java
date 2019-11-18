@@ -1,6 +1,6 @@
-package com.fhir;
+package com.fhir.client;
 
-public class client {
+public class example {
 	
 	public static void main(String args[]) {
 		String url = "http://52.21.3.60:57773/csp/healthshare/hsods/fhir/dstu2/";
