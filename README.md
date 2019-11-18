@@ -1,2 +1,2 @@
-# mirthFHIR
-FHIR integration for Mirth and Java program
+# Coding FHIR in Mirth
+This Jar facilitated mirth programmers to invoke FHIR rest service with very simple invocation...
