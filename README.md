@@ -1,4 +1,4 @@
-# Coding FHIR in Mirth
+# Coding FHIR in Basic Java
 
 This Jar facilitated mirth programmers to invoke FHIR rest service with very simple invocation...
 
