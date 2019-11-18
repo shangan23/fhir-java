@@ -16,8 +16,8 @@ This Jar facilitated mirth programmers to invoke FHIR rest service with very sim
 FhirFactory fhirFactory = new FhirFactory();
 FhirInterface client = fhirFactory.initFhir("Dstu2", url, uname, pwd);
 ```
-> url - Endpoint url of DSTU2, uname - usernam, pwd - Password
-> This is for Basic authorization
+> url - Endpoint url of DSTU2, uname - usernam, pwd - Password.
+Note: This is for Basic authorization.
 
 * Get Patient Bundle JSON
 ```java
