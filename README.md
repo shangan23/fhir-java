@@ -13,8 +13,8 @@ This Jar facilitated mirth programmers to invoke FHIR rest service with very sim
 
 * Initiate the object with Version (DSTU2, STU3, R4)
 ```java
-		FhirFactory fhirFactory = new FhirFactory();
-		FhirInterface client = fhirFactory.initFhir("Dstu2", url, uname, pwd);
+FhirFactory fhirFactory = new FhirFactory();
+FhirInterface client = fhirFactory.initFhir("Dstu2", url, uname, pwd);
 ```
 * Get Patient Bundle JSON
 ```java
