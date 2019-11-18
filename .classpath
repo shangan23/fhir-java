@@ -38,5 +38,6 @@
 	<classpathentry kind="lib" path="/Users/shangan/Downloads/jar_files (6)/stax-api-1.0-2.jar"/>
 	<classpathentry kind="lib" path="/Users/shangan/Downloads/jar_files (6)/stax2-api-3.1.4.jar"/>
 	<classpathentry kind="lib" path="/Users/shangan/Downloads/jar_files (6)/woodstox-core-asl-4.4.1.jar"/>
+	<classpathentry kind="lib" path="/Users/shangan/Downloads/slf4j-simple-1.7.28.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
