@@ -2,13 +2,6 @@
 
 This Jar facilitated mirth programmers to invoke FHIR rest service with very simple invocation...
 
-## How to setup Java Project in Eclipse?
-* Clone this repository to your local machine
-* Open eclipse and goto File -> New -> Java Project
-* Window will be opened with setting of the project.
-* Give your desired project name.
-* Un-check default location and select the location where you have cloned the repository.
-
 ## How to use ?
 
 * Initiate the object with Version (DSTU2, STU3, R4)
@@ -34,3 +27,10 @@ System.out.print(Practitioner);
 String PatientObservation = client.getPatientResourceList("100000006", "Observation");
 System.out.print(PatientObservation);
 ```
+## Contribution Steps
+### How to setup Java Project in Eclipse?
+* Clone this repository to your local machine
+* Open eclipse and goto File -> New -> Java Project
+* Window will be opened with setting of the project.
+* Give your desired project name.
+* Un-check default location and select the location where you have cloned the repository.
