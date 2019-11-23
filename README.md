@@ -14,12 +14,12 @@ Note: This is for Basic authorization.
 
 * Get Patient Bundle JSON
 ```java
-String Patients = client.getUserDetail("Patient");
+String Patients = client.getUserList("Patient");
 System.out.print(Patients);
 ```
 * Get Practitioner Bundle JSON
 ```java
-String Practitioner = client.getUserDetail("Practitioner");
+String Practitioner = client.getUserList("Practitioner");
 System.out.print(Practitioner);
 ```
 * Get Patient Resource Bundle JSON
