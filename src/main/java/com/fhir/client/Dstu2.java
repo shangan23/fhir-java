@@ -11,8 +11,10 @@ import ca.uhn.fhir.model.dstu2.resource.Encounter;
 import ca.uhn.fhir.model.dstu2.resource.Immunization;
 import ca.uhn.fhir.model.dstu2.resource.MedicationOrder;
 import ca.uhn.fhir.model.dstu2.resource.Observation;
+import ca.uhn.fhir.model.dstu2.resource.Parameters;
 import ca.uhn.fhir.model.dstu2.resource.Patient;
 import ca.uhn.fhir.model.dstu2.resource.Practitioner;
+import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
 
@@ -98,6 +100,19 @@ public class Dstu2 implements FhirInterface {
 
 		}
 		System.out.println("Total " + bundle + " = " + results.getEntry().size());
+		return ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
+	}
+
+	@Override
+	public String getPatient(String PatientID) {
+		Bundle results = null;
+		 Parameters outParams = client
+                 .operation()
+                 .onInstance(new IdDt("Patient", PatientID))
+                 .named("$everything")
+                 .withNoParameters(Parameters.class) // No input parameters
+                 .execute();
+		results = (Bundle) outParams.getParameter().get(0).getResource();
 		return ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
 	}
 
