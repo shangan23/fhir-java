@@ -8,12 +8,12 @@ public class example {
 		String pwd = "SYS";
 		FhirFactory fhirFactory = new FhirFactory();
 		FhirInterface client = fhirFactory.initFhir("Dstu2", url, uname, pwd);
-		String Patient = client.getPatient("100000006");
-		System.out.print(Patient);
+		//String Patient = client.getPatient("100000006");
+		//System.out.print(Patient);
 		//String Practitioner = client.getUserList("Practitioner");
 		//System.out.print(Practitioner);
-		//String PatientObservation = client.getPatientResourceList("100000006", "Appointment");
-		//System.out.print(PatientObservation);
+		String PatientDemographics = client.getPatientDemographics("100000006");
+		System.out.print(PatientDemographics);
 	}
 
 }
