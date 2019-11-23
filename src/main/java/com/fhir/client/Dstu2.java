@@ -82,14 +82,13 @@ public class Dstu2 implements FhirInterface {
 		}
 		System.out.println("Total " + bundle + " = " + results.getEntry().size());
 		return ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
-	
+
 	}
-	
+
 	@Override
 	public String getPatientDemographics(String PatientID) {
 		Patient result = null;
-		result = client.read().resource(Patient.class)
-				.withId(PatientID).execute();
+		result = client.read().resource(Patient.class).withId(PatientID).execute();
 		return ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(result);
 	}
 
@@ -114,12 +113,9 @@ public class Dstu2 implements FhirInterface {
 	@Override
 	public String getPatientFull(String PatientID) {
 		Bundle results = null;
-		 Parameters outParams = client
-                 .operation()
-                 .onInstance(new IdDt("Patient", PatientID))
-                 .named("$everything")
-                 .withNoParameters(Parameters.class) // No input parameters
-                 .execute();
+		Parameters outParams = client.operation().onInstance(new IdDt("Patient", PatientID)).named("$everything")
+				.withNoParameters(Parameters.class) // No input parameters
+				.execute();
 		results = (Bundle) outParams.getParameter().get(0).getResource();
 		return ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
 	}
