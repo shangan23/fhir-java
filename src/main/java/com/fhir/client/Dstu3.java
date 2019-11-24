@@ -23,6 +23,7 @@ public class Dstu3 implements FhirInterface {
 
 	static IGenericClient client;
 	static FhirContext ctx;
+	static String formatResult;
 
 	public Dstu3(String url, String uname, String pwd) {
 		ctx = FhirContext.forDstu3();
@@ -82,7 +83,7 @@ public class Dstu3 implements FhirInterface {
 			break;
 		}
 		System.out.println("Total " + bundle + " = " + results.getEntry().size());
-		return ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
+		return formatOutput(results);
 
 	}
 
@@ -90,7 +91,7 @@ public class Dstu3 implements FhirInterface {
 	public String getPatientDemographics(String PatientID) {
 		Patient result = null;
 		result = client.read().resource(Patient.class).withId(PatientID).execute();
-		return ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(result);
+		return formatOutput(result);
 	}
 
 	@Override
@@ -108,7 +109,7 @@ public class Dstu3 implements FhirInterface {
 
 		}
 		System.out.println("Total " + bundle + " = " + results.getEntry().size());
-		return ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
+		return formatOutput(results);
 	}
 
 	@Override
@@ -118,7 +119,34 @@ public class Dstu3 implements FhirInterface {
 				.withNoParameters(Parameters.class) // No input parameters
 				.execute();
 		results = (Bundle) outParams.getParameter().get(0).getResource();
-		return ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
+		return formatOutput(results);
+	}
+
+	@Override
+	public void setFormat(String format) {
+		formatResult = format;
+	}
+	
+	private String formatOutput(Bundle results) {
+		String output = null;
+		if(formatResult=="JSON") {
+			output = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
+		}else if(formatResult=="XML") {
+			output = ctx.newXmlParser().setPrettyPrint(true).encodeResourceToString(results);
+		}
+		return output;
+		
+	}
+	
+	private String formatOutput(Patient results) {
+		String output = null;
+		if(formatResult=="JSON") {
+			output = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
+		}else if(formatResult=="XML") {
+			output = ctx.newXmlParser().setPrettyPrint(true).encodeResourceToString(results);
+		}
+		return output;
+		
 	}
 
 }
