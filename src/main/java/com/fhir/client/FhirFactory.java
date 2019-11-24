@@ -1,8 +1,5 @@
 package com.fhir.client;
 
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
-
 public class FhirFactory {
 	
 	String formatResult;
