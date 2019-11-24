@@ -7,12 +7,10 @@ public class example {
 		String url3 = "http://52.21.3.60:57773/csp/healthshare/hsods/fhir/stu3/";
 		String uname = "_System";
 		String pwd = "SYS";
-		String format = "XML";
-		FhirFactory fhirFactory = new FhirFactory();
+		String format = "JSON";
+		FhirFactory fhirFactory = new FhirFactory(format);
 		FhirInterface client2 = fhirFactory.initFhir("Dstu2", url2, uname, pwd);
 		FhirInterface client3 = fhirFactory.initFhir("Dstu3", url3, uname, pwd);
-		client2.setFormat("JSON");
-		client3.setFormat(format);
 		//String Patient = client.getPatient("100000006");
 		//System.out.print(Patient);
 		String Practitioner = client2.getUserList("Practitioner");

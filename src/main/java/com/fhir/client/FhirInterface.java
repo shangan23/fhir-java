@@ -5,6 +5,5 @@ public interface FhirInterface {
 	String getPatientResourceList(String PatientID, String bundle);
 	String getUserList(String bundle);
 	String getPatientFull(String PatientID);
-	String getPatientDemographics(String PatientID);
-	void setFormat(String format); 
+	String getPatientDemographics(String PatientID);	
 }

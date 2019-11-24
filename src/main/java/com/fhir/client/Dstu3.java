@@ -25,11 +25,12 @@ public class Dstu3 implements FhirInterface {
 	static FhirContext ctx;
 	static String formatResult;
 
-	public Dstu3(String url, String uname, String pwd) {
+	public Dstu3(String url, String uname, String pwd, String format) {
 		ctx = FhirContext.forDstu3();
 		client = ctx.newRestfulGenericClient(url);
 		BasicAuthInterceptor AuthInterceptor = HTTPBasicAuthorization(uname, pwd);
 		client.registerInterceptor(AuthInterceptor);
+		formatResult = format;
 	}
 
 	private static BasicAuthInterceptor HTTPBasicAuthorization(String username, String password) {
@@ -120,11 +121,6 @@ public class Dstu3 implements FhirInterface {
 				.execute();
 		results = (Bundle) outParams.getParameter().get(0).getResource();
 		return formatOutput(results);
-	}
-
-	@Override
-	public void setFormat(String format) {
-		formatResult = format;
 	}
 	
 	private String formatOutput(Bundle results) {
