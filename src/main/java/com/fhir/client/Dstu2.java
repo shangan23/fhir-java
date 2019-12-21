@@ -22,14 +22,13 @@ public class Dstu2 implements FhirInterface {
 
 	static IGenericClient client;
 	static FhirContext ctx;
-	static String formatResult;
+	String formatResult;
 
-	public Dstu2(String url, String uname, String pwd, String format) {
+	public Dstu2(String url, String uname, String pwd) {
 		ctx = FhirContext.forDstu2();
 		client = ctx.newRestfulGenericClient(url);
 		BasicAuthInterceptor AuthInterceptor = HTTPBasicAuthorization(uname, pwd);
 		client.registerInterceptor(AuthInterceptor);
-		formatResult = format;
 	}
 
 	private static BasicAuthInterceptor HTTPBasicAuthorization(String username, String password) {
@@ -123,25 +122,15 @@ public class Dstu2 implements FhirInterface {
 	}
 
 	private String formatOutput(Bundle results) {
-		String output = null;
-		if(formatResult=="JSON") {
-			output = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
-		}else if(formatResult=="XML") {
-			output = ctx.newXmlParser().setPrettyPrint(true).encodeResourceToString(results);
-		}
+		String output = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
 		return output;
-		
+
 	}
-	
+
 	private String formatOutput(Patient results) {
-		String output = null;
-		if(formatResult=="JSON") {
-			output = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
-		}else if(formatResult=="XML") {
-			output = ctx.newXmlParser().setPrettyPrint(true).encodeResourceToString(results);
-		}
+		String output = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
 		return output;
-		
+
 	}
 
 }
