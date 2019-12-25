@@ -1,4 +1,5 @@
 package com.fhir.client;
+
 import org.hl7.fhir.r4.model.AllergyIntolerance;
 import org.hl7.fhir.r4.model.Appointment;
 import org.hl7.fhir.r4.model.Bundle;
@@ -33,32 +34,32 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
 import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
 
-public class R4 implements FhirInterface{
-	
+public class R4 extends ErrorHandler implements FhirInterface {
+
 	static IGenericClient client;
 	static FhirContext ctx;
 
 	public R4(String url, String uname, String pwd) {
 		ctx = FhirContext.forR4();
 		client = ctx.newRestfulGenericClient(url);
-		if(pwd.equalsIgnoreCase("$bearer$Token$FHIR$")) {
+		if (pwd.equalsIgnoreCase("$bearer$Token$FHIR$")) {
 			BearerTokenAuthInterceptor AuthInterceptor = HTTPTokenAuthorization(uname);
 			client.registerInterceptor(AuthInterceptor);
-		}else {
+		} else {
 			BasicAuthInterceptor AuthInterceptor = HTTPBasicAuthorization(uname, pwd);
 			client.registerInterceptor(AuthInterceptor);
 		}
 	}
-	
+
 	private static BasicAuthInterceptor HTTPBasicAuthorization(String username, String password) {
 		BasicAuthInterceptor authInterceptor = new BasicAuthInterceptor(username, password);
 		return authInterceptor;
 
 	}
-	
-	private static BearerTokenAuthInterceptor HTTPTokenAuthorization(String token){
+
+	private static BearerTokenAuthInterceptor HTTPTokenAuthorization(String token) {
 		// Create a context and get the client factory so it can be configured
-	
+
 		BearerTokenAuthInterceptor authInterceptor = new BearerTokenAuthInterceptor(token);
 		return authInterceptor;
 	}
@@ -69,8 +70,7 @@ public class R4 implements FhirInterface{
 		switch (bundle) {
 		case "AllergyIntolerance":
 			results = client.search().forResource(AllergyIntolerance.class)
-					.where(AllergyIntolerance.PATIENT.hasId(PatientID))
-					.returnBundle(Bundle.class).execute();
+					.where(AllergyIntolerance.PATIENT.hasId(PatientID)).returnBundle(Bundle.class).execute();
 			break;
 		case "Appointment":
 			results = client.search().forResource(Appointment.class).where(Appointment.PATIENT.hasId(PatientID))
@@ -82,13 +82,11 @@ public class R4 implements FhirInterface{
 			break;
 		case "DiagnosticReport":
 			results = client.search().forResource(DiagnosticReport.class)
-					.where(DiagnosticReport.PATIENT.hasId(PatientID))
-					.returnBundle(Bundle.class).execute();
+					.where(DiagnosticReport.PATIENT.hasId(PatientID)).returnBundle(Bundle.class).execute();
 			break;
 		case "DocumentReference":
 			results = client.search().forResource(DocumentReference.class)
-					.where(DocumentReference.PATIENT.hasId(PatientID))
-					.returnBundle(Bundle.class).execute();
+					.where(DocumentReference.PATIENT.hasId(PatientID)).returnBundle(Bundle.class).execute();
 			break;
 		case "Encounter":
 			results = client.search().forResource(Encounter.class).where(Encounter.PATIENT.hasId(PatientID))
@@ -99,8 +97,8 @@ public class R4 implements FhirInterface{
 					.returnBundle(Bundle.class).execute();
 			break;
 		case "MedicationOrder":
-			results = client.search().forResource(MedicationRequest.class).where(MedicationRequest.PATIENT.hasId(PatientID))
-					.returnBundle(Bundle.class).execute();
+			results = client.search().forResource(MedicationRequest.class)
+					.where(MedicationRequest.PATIENT.hasId(PatientID)).returnBundle(Bundle.class).execute();
 			break;
 		case "Observation":
 			results = client.search().forResource(Observation.class).where(Observation.PATIENT.hasId(PatientID))
@@ -124,12 +122,10 @@ public class R4 implements FhirInterface{
 		Bundle results = null;
 		switch (bundle) {
 		case "Patient":
-			results = client.search().forResource(Patient.class)
-					.returnBundle(Bundle.class).execute();
+			results = client.search().forResource(Patient.class).returnBundle(Bundle.class).execute();
 			break;
 		case "Practitioner":
-			results = client.search().forResource(Practitioner.class)
-					.returnBundle(Bundle.class).execute();
+			results = client.search().forResource(Practitioner.class).returnBundle(Bundle.class).execute();
 			break;
 
 		}
@@ -149,53 +145,41 @@ public class R4 implements FhirInterface{
 
 	@Override
 	public String updatePatient(String PatientId) {
-		Patient patient = client.read()
-                .resource(Patient.class)
-                .withId(PatientId)
-                .execute(); 
-		System.out.println("Version ID: " + patient.getIdElement().getVersionIdPart());
-		//patient.addAddress().setCity("Oklahoma").setCountry("USA");
-		//System.out.print(formatOutput(patient));
-		Patient pat = new Patient();
+		try {
+			Patient patient = client.read().resource(Patient.class).withId(PatientId).execute();
 
-		JsonArray arr = new JsonArray(); 
-		JsonObject obj=new JsonObject();    
-		obj.addProperty("op","replace");  
-		obj.addProperty("path","/birthDate");  
-		obj.addProperty("value","1990-09-15");  
-		arr.add(obj); 
+			System.out.println("Version ID: " + patient.getIdElement().getVersionIdPart());
+			// patient.addAddress().setCity("Oklahoma").setCountry("USA");
+			// System.out.print(formatOutput(patient));
+			JsonArray arr = new JsonArray();
+			JsonObject obj = new JsonObject();
+			obj.addProperty("op", "replace");
+			obj.addProperty("path", "/birthDate");
+			obj.addProperty("value", "1990-09-15");
+			arr.add(obj);
 
-		String patch = "[\n" + 
-				"  {\n" + 
-				"    \"path\": \"/name/0/id\",\n" + 
-				"    \"op\": \"test\",\n" + 
-				"    \"value\": \"CI-"+PatientId+"-0\"\n" + 
-				"  },\n" + 
-				"  {\n" + 
-				"    \"path\": \"/name/0/given\",\n" + 
-				"    \"op\": \"replace\",\n" + 
-				"    \"value\": [\n" + 
-				"      \"Shankar\",\n" + 
-				"      \"Ganesh\"\n" + 
-				"    ]\n" + 
-				"  }\n" + 
-				"]";
-		MethodOutcome outcome = client.patch()
-				.withBody(patch)
-				.withId("Patient/"+PatientId)
-				.withAdditionalHeader("If-Match","W/\""+patient.getIdElement().getVersionIdPart()+"\"")
-				.execute();
+			String patch = "[\n" + "  {\n" + "    \"path\": \"/name/0/id\",\n" + "    \"op\": \"test\",\n"
+					+ "    \"value\": \"CI-" + PatientId + "-0\"\n" + "  },\n" + "  {\n"
+					+ "    \"path\": \"/name/0/given\",\n" + "    \"op\": \"replace\",\n" + "    \"value\": [\n"
+					+ "      \"Shankar\",\n" + "      \"Ganesh\"\n" + "    ]\n" + "  }\n" + "]";
+			MethodOutcome outcome = client.patch().withBody(patch).withId("Patient/" + PatientId)
+					.withAdditionalHeader("If-Match", "W/\"" + patient.getIdElement().getVersionIdPart() + "\"")
+					.execute();
 
-		// The MethodOutcome object will contain information about the
-		// response from the server, including the ID of the created 
-		// resource, the OperationOutcome response, etc. (assuming that
-		// any of these things were provided by the server! They may not
-		// always be)
-		
-		//System.out.println("Got ID: " + outcome.getResponseHeaders().get("status").toString());
-		return outcome.getResponseHeaders().get("status").toString();
+			// The MethodOutcome object will contain information about the
+			// response from the server, including the ID of the created
+			// resource, the OperationOutcome response, etc. (assuming that
+			// any of these things were provided by the server! They may not
+			// always be)
+
+			// System.out.println("Got ID: " +
+			// outcome.getResponseHeaders().get("status").toString());
+			return outcome.getResponseHeaders().get("status").toString();
+		} catch (Exception e) {
+			return error(e);
+		}
 	}
-	
+
 	@Override
 	public String createPatient() {
 		// Create a patient object
@@ -203,17 +187,15 @@ public class R4 implements FhirInterface{
 		// ..populate the patient object..
 		patient.addIdentifier().setSystem("urn:system").setValue("12345");
 		patient.addName().setFamily("Smith").addGiven("John");
-		//patient.addAddress().setCity("Oklahoma").setCountry("USA");
+		// patient.addAddress().setCity("Oklahoma").setCountry("USA");
 
 		// Invoke the server create method (and send pretty-printed JSON
 		// encoding to the server
 		// instead of the default which is non-pretty printed XML)
-		MethodOutcome outcome = client.create()
-		   .resource(patient)
-		   .execute();
+		MethodOutcome outcome = client.create().resource(patient).execute();
 
 		// The MethodOutcome object will contain information about the
-		// response from the server, including the ID of the created 
+		// response from the server, including the ID of the created
 		// resource, the OperationOutcome response, etc. (assuming that
 		// any of these things were provided by the server! They may not
 		// always be)
@@ -221,16 +203,17 @@ public class R4 implements FhirInterface{
 		System.out.println("Got ID: " + id.getValue());
 		return id.getValue();
 	}
-	
+
 	private String formatOutput(Bundle results) {
 		String output = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
 		return output;
-		
+
 	}
-	
+
 	private String formatOutput(Patient results) {
 		String output = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
 		return output;
-		
+
 	}
+
 }
