@@ -5,30 +5,20 @@ public class example {
 	public static void main(String args[]) {
 		String url2 = "http://52.21.3.60:57773/csp/healthshare/hsods/fhir/dstu2/";
 		String url3 = "http://52.21.3.60:57773/csp/healthshare/hsods/fhir/stu3/";
+		String url4 = "https://fhir-ehr.sandboxcerner.com/r4/0b8a0111-e8e6-4c26-a91c-5069cbc6b1ca";
 		String uname = "_System";
 		String pwd = "SYS";
 		FhirFactory fhirFactory = new FhirFactory();
 		FhirInterface client2 = fhirFactory.initFhir("Dstu2", url2, uname, pwd);
 		FhirInterface client3 = fhirFactory.initFhir("Dstu3", url3, uname, pwd);
-		//String Patient = client.getPatient("100000006",");
+		FhirInterface client4 = fhirFactory.initFhir("R4", url4, "eyJraWQiOiIyMDE5LTEyLTI1VDAzOjM1OjEwLjE5Ni5lYyIsInR5cCI6IkpXVCIsImFsZyI6IkVTMjU2In0.eyJzdWIiOiJwb3J0YWwiLCJ1cm46Y29tOmNlcm5lcjphdXRob3JpemF0aW9uOmNsYWltcyI6eyJ2ZXIiOiIxLjAiLCJlbmNvdW50ZXIiOiI0ODA3OTA2IiwidG50IjoiMGI4YTAxMTEtZThlNi00YzI2LWE5MWMtNTA2OWNiYzZiMWNhIiwiYXpzIjoibGF1bmNoIG9ubGluZV9hY2Nlc3MgdXNlclwvUGF0aWVudC5yZWFkIHVzZXJcL1BhdGllbnQud3JpdGUgdXNlclwvQWxsZXJneUludG9sZXJhbmNlLnJlYWQgdXNlclwvQWxsZXJneUludG9sZXJhbmNlLndyaXRlIiwidXNlciI6IjQ0NjQwMDciLCJwYXRpZW50IjoiNjk0NjAwNyJ9LCJhenAiOiIyNDI1NjEyZC01YTU5LTRkNTYtODVhNy01MDNkNjVjM2Y5OTkiLCJpc3MiOiJodHRwczpcL1wvYXV0aG9yaXphdGlvbi5zYW5kYm94Y2VybmVyLmNvbVwvIiwiZXhwIjoxNTc3MzA3NzU0LCJpYXQiOjE1NzczMDcxNTQsImp0aSI6IjM3NzJlMjdkLWFjNmYtNGRiNi04Yzc1LTdmZTI5YzEzNjg5NiIsInVybjpjZXJuZXI6YXV0aG9yaXphdGlvbjpjbGFpbXM6dmVyc2lvbjoxIjp7InZlciI6IjEuMCIsInByb2ZpbGVzIjp7Im1pbGxlbm5pdW0tdjEiOnsicGVyc29ubmVsIjoiNDQ2NDAwNyIsImVuY291bnRlciI6IjQ4MDc5MDYifSwic21hcnQtdjEiOnsicGF0aWVudHMiOlsiNjk0NjAwNyJdLCJhenMiOiJsYXVuY2ggb25saW5lX2FjY2VzcyB1c2VyXC9QYXRpZW50LnJlYWQgdXNlclwvUGF0aWVudC53cml0ZSB1c2VyXC9BbGxlcmd5SW50b2xlcmFuY2UucmVhZCB1c2VyXC9BbGxlcmd5SW50b2xlcmFuY2Uud3JpdGUifX0sImNsaWVudCI6eyJuYW1lIjoiY29yZW1vYmlsZSIsImlkIjoiMjQyNTYxMmQtNWE1OS00ZDU2LTg1YTctNTAzZDY1YzNmOTk5In0sInVzZXIiOnsicHJpbmNpcGFsIjoicG9ydGFsIiwicGVyc29uYSI6InByb3ZpZGVyIiwiaWRzcCI6IjBiOGEwMTExLWU4ZTYtNGMyNi1hOTFjLTUwNjljYmM2YjFjYSIsInNlc3Npb25JZCI6ImI4MjVjOGUwLTc4YTAtNGM5Mi1iZDcyLTU5MGJlNWU5NzVjMSIsInByaW5jaXBhbFR5cGUiOiJVU0VSTkFNRSIsInByaW5jaXBhbFVyaSI6Imh0dHBzOlwvXC9taWxsZW5uaWEuc2FuZGJveGNlcm5lci5jb21cL2luc3RhbmNlXC8wYjhhMDExMS1lOGU2LTRjMjYtYTkxYy01MDY5Y2JjNmIxY2FcL3ByaW5jaXBhbFwvMDAwMC4wMDAwLjAwNDQuMUQ4NyIsImlkc3BVcmkiOiJodHRwczpcL1wvbWlsbGVubmlhLnNhbmRib3hjZXJuZXIuY29tXC9hY2NvdW50c1wvZmhpcnBsYXkudGVtcF9yaG8uY2VybmVyYXNwLmNvbVwvMGI4YTAxMTEtZThlNi00YzI2LWE5MWMtNTA2OWNiYzZiMWNhXC9sb2dpbiJ9LCJ0ZW5hbnQiOiIwYjhhMDExMS1lOGU2LTRjMjYtYTkxYy01MDY5Y2JjNmIxY2EifX0.ZqUp9AOfJutx_i-AiL38WAAMhc6GqHld5SwhDX51rj8ozUa2Hkp6WuUJAIwWbd636qtQCnwsmYqNX0yGsWlOwQ", "$bearer$Token$FHIR$");
+		/*//String Patient = client.getPatient("100000006",");
 		String Patient = client2.getPatientResourceList("100000006","AllergyIntolerance");
-		System.out.print(Patient);
-		/*String Practitioner = client2.getUserList("Practitioner");
-		System.out.print(Practitioner);*/
+		System.out.print(Patient);*/
+		//String NewPatient = client4.getPatientDemographics("1316024");
+		String UpdatePatient = client4.updatePatient("6946007");
+		System.out.print(UpdatePatient);
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		String PatientDemographics = client2.getPatientDemographics("100000006");
-		System.out.print(PatientDemographics);
 	}
 
 }
