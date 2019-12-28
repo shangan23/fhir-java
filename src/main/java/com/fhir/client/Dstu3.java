@@ -142,32 +142,13 @@ public class Dstu3 implements FhirInterface {
 	}
 
 	@Override
-	public String createPatient() {
-		Patient patient = new Patient();
-		// ..populate the patient object..
-		patient.addIdentifier().setSystem("urn:system").setValue("12345");
-		patient.addName().setFamily("Smith").addGiven("John");
-		patient.addAddress().setCity("Oklahoma").setCountry("USA");
-
-		// Invoke the server create method (and send pretty-printed JSON
-		// encoding to the server
-		// instead of the default which is non-pretty printed XML)
-		MethodOutcome outcome = client.create()
-		   .resource(patient)
-		   .prettyPrint()
-		   .encodedJson()
-		   .execute();
-
-		// The MethodOutcome object will contain information about the
-		// response from the server, including the ID of the created 
-		// resource, the OperationOutcome response, etc. (assuming that
-		// any of these things were provided by the server! They may not
-		// always be)
-		return formatOutput(outcome);
+	public String updatePatient(String PatientId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
-	public String updatePatient(String PatientId) {
+	public String updatePatientAllergy(String AllergyId, String Payload) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -1,6 +1,7 @@
 package com.fhir.client;
 
 import org.hl7.fhir.r4.model.AllergyIntolerance;
+import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Appointment;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Condition;
@@ -179,31 +180,7 @@ public class R4 extends ErrorHandler implements FhirInterface {
 			return error(e);
 		}
 	}
-
-	@Override
-	public String createPatient() {
-		// Create a patient object
-		Patient patient = new Patient();
-		// ..populate the patient object..
-		patient.addIdentifier().setSystem("urn:system").setValue("12345");
-		patient.addName().setFamily("Smith").addGiven("John");
-		// patient.addAddress().setCity("Oklahoma").setCountry("USA");
-
-		// Invoke the server create method (and send pretty-printed JSON
-		// encoding to the server
-		// instead of the default which is non-pretty printed XML)
-		MethodOutcome outcome = client.create().resource(patient).execute();
-
-		// The MethodOutcome object will contain information about the
-		// response from the server, including the ID of the created
-		// resource, the OperationOutcome response, etc. (assuming that
-		// any of these things were provided by the server! They may not
-		// always be)
-		IdType id = (IdType) outcome.getId();
-		System.out.println("Got ID: " + id.getValue());
-		return id.getValue();
-	}
-
+	
 	private String formatOutput(Bundle results) {
 		String output = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
 		return output;
@@ -214,6 +191,25 @@ public class R4 extends ErrorHandler implements FhirInterface {
 		String output = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(results);
 		return output;
 
+	}
+
+	@Override
+	public String updatePatientAllergy(String AllergyId, String Payload) {
+		AllergyIntolerance Allergy = client.read().resource(AllergyIntolerance.class).withId(AllergyId).execute();
+		String patient = "Patient/"+Payload;
+		
+		AllergyIntolerance NewAllergy = new AllergyIntolerance();
+		NewAllergy.addNote(new Annotation().setText("Section0_Allergy0"));
+		NewAllergy.addCategoryElement().setValueAsString("environment");
+		NewAllergy.getPatient();
+		
+		
+		MethodOutcome outcome = client.update()
+				.resource(NewAllergy)
+				.withId(AllergyId)
+				.withAdditionalHeader("If-Match", "W/\"" + Allergy.getIdElement().getVersionIdPart() + "\"")
+				.execute();
+		return outcome.getResponseHeaders().get("status").toString();
 	}
 
 }
