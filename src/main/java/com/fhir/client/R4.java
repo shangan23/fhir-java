@@ -24,6 +24,7 @@ import com.google.gson.JsonObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.http.HttpException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -195,21 +196,26 @@ public class R4 extends ErrorHandler implements FhirInterface {
 
 	@Override
 	public String updatePatientAllergy(String AllergyId, String Payload) {
+		//try {
 		AllergyIntolerance Allergy = client.read().resource(AllergyIntolerance.class).withId(AllergyId).execute();
 		String patient = "Patient/"+Payload;
 		
 		AllergyIntolerance NewAllergy = new AllergyIntolerance();
 		NewAllergy.addNote(new Annotation().setText("Section0_Allergy0"));
 		NewAllergy.addCategoryElement().setValueAsString("environment");
-		NewAllergy.getPatient();
+		NewAllergy.getAsserter().setReference(patient);
 		
 		
 		MethodOutcome outcome = client.update()
-				.resource(NewAllergy)
+				.resource(Allergy)
 				.withId(AllergyId)
 				.withAdditionalHeader("If-Match", "W/\"" + Allergy.getIdElement().getVersionIdPart() + "\"")
 				.execute();
+		System.out.print(outcome.getResponseHeaders().get("X-Request-Id").toString());
 		return outcome.getResponseHeaders().get("status").toString();
+		/*} catch(Exception e) {
+			return error(e);
+		}*/
 	}
 
 }
