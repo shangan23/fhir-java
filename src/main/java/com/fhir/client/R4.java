@@ -18,6 +18,8 @@ import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Quantity;
 import org.hl7.fhir.r4.model.Reference;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -33,6 +35,7 @@ import ca.uhn.fhir.parser.json.JsonLikeArray;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.interceptor.AdditionalRequestHeadersInterceptor;
 import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
 import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
 
@@ -159,13 +162,16 @@ public class R4 extends ErrorHandler implements FhirInterface {
 			obj.addProperty("path", "/birthDate");
 			obj.addProperty("value", "1990-09-15");
 			arr.add(obj);
+			
+			AdditionalRequestHeadersInterceptor interceptor = new AdditionalRequestHeadersInterceptor();
+			interceptor.addHeaderValue("If-Match", "W/\"" + patient.getIdElement().getVersionIdPart() + "\"");
+			client.registerInterceptor(interceptor);
 
 			String patch = "[\n" + "  {\n" + "    \"path\": \"/name/0/id\",\n" + "    \"op\": \"test\",\n"
 					+ "    \"value\": \"CI-" + PatientId + "-0\"\n" + "  },\n" + "  {\n"
 					+ "    \"path\": \"/name/0/given\",\n" + "    \"op\": \"replace\",\n" + "    \"value\": [\n"
 					+ "      \"Shankar\",\n" + "      \"Ganesh\"\n" + "    ]\n" + "  }\n" + "]";
 			MethodOutcome outcome = client.patch().withBody(patch).withId("Patient/" + PatientId)
-					.withAdditionalHeader("If-Match", "W/\"" + patient.getIdElement().getVersionIdPart() + "\"")
 					.execute();
 
 			// The MethodOutcome object will contain information about the
@@ -176,7 +182,7 @@ public class R4 extends ErrorHandler implements FhirInterface {
 
 			// System.out.println("Got ID: " +
 			// outcome.getResponseHeaders().get("status").toString());
-			return outcome.getResponseHeaders().get("status").toString();
+			return outcome.getOperationOutcome().toString();
 		} catch (Exception e) {
 			return error(e);
 		}
@@ -193,7 +199,7 @@ public class R4 extends ErrorHandler implements FhirInterface {
 		return output;
 
 	}
-
+	
 	@Override
 	public String updatePatientAllergy(String AllergyId, String Payload) {
 		//try {
@@ -205,14 +211,15 @@ public class R4 extends ErrorHandler implements FhirInterface {
 		NewAllergy.addCategoryElement().setValueAsString("environment");
 		NewAllergy.getAsserter().setReference(patient);
 		
+		AdditionalRequestHeadersInterceptor interceptor = new AdditionalRequestHeadersInterceptor();
+		interceptor.addHeaderValue("If-Match", "W/\"" + Allergy.getIdElement().getVersionIdPart() + "\"");
+		client.registerInterceptor(interceptor);
 		
 		MethodOutcome outcome = client.update()
 				.resource(Allergy)
 				.withId(AllergyId)
-				.withAdditionalHeader("If-Match", "W/\"" + Allergy.getIdElement().getVersionIdPart() + "\"")
 				.execute();
-		System.out.print(outcome.getResponseHeaders().get("X-Request-Id").toString());
-		return outcome.getResponseHeaders().get("status").toString();
+		return outcome.getOperationOutcome().getMeta().toString();
 		/*} catch(Exception e) {
 			return error(e);
 		}*/
