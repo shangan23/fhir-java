@@ -13,11 +13,8 @@ import org.hl7.fhir.dstu3.model.Observation;
 import org.hl7.fhir.dstu3.model.Parameters;
 import org.hl7.fhir.dstu3.model.Patient;
 import org.hl7.fhir.dstu3.model.Practitioner;
-import org.hl7.fhir.instance.model.api.IBaseResource;
-
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.primitive.IdDt;
-import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
 
@@ -135,20 +132,20 @@ public class Dstu3 implements FhirInterface {
 		
 	}
 	
-	private String formatOutput(MethodOutcome results) {
-		String output = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString((IBaseResource) results);
-		return output;
-
-	}
-
 	@Override
-	public String updatePatient(String PatientId) {
+	public String updatePatient(String PatientId, String Payload, Boolean Patch) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String updatePatientAllergy(String AllergyId, String Payload) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String createPatient(String Payload) {
 		// TODO Auto-generated method stub
 		return null;
 	}
