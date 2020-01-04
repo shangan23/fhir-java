@@ -217,10 +217,11 @@ public class R4 extends ErrorHandler implements FhirInterface {
 		Reference OrgReference = new Reference("Organization/619848");
 		patient.addIdentifier().setAssigner(OrgReference);
 
-		patient.addIdentifier()
+		/*patient.addIdentifier()
 				.setType(new CodeableConcept()
 						.addCoding(new Coding().setCode("SB").setSystem("http://hl7.org/fhir/v2/0203")))
-				.setSystem("http://hl7.org/fhir/sid/us-ssn").setValue("123456789");
+				.setSystem("http://hl7.org/fhir/sid/us-ssn").setValue("123456789");*/
+		
 		patient.setGender(AdministrativeGender.FEMALE);
 		patient.addAddress().setUse(Address.AddressUse.HOME).addLine("Street name, number, direction & P.O. Box etc.")
 				.setCity("Name of city, town etc.").setState("Sub-unit of country (abbreviations ok)")
@@ -238,10 +239,11 @@ public class R4 extends ErrorHandler implements FhirInterface {
 				.setName(new HumanName().setFamily("Jayaraman").addGiven("Shankar Ganesh").setUse(NameUse.OFFICIAL));
 		patient.addContact(emergencyContact);
 
-		Reference practitionerReference = new Reference("Practitioner/605925");
+		/*Reference practitionerReference = new Reference("Practitioner/605925");
 		ArrayList<Reference> ref = new ArrayList<>();
 		ref.add(practitionerReference);
-		patient.setGeneralPractitioner(ref);
+		patient.setGeneralPractitioner(ref);*/
+		
 		String encoded = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patient);
 		MethodOutcome outcome = client.create().resource(patient).encodedJson().execute();
 		System.out.print(outcome.getId());
