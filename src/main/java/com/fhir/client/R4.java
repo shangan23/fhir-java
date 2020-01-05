@@ -1,19 +1,18 @@
 package com.fhir.client;
 
-import java.awt.List;
-import java.util.ArrayList;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-import org.hl7.fhir.dstu3.model.Identifier.IdentifierUse;
-import org.hl7.fhir.r4.formats.IParser;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.Address.AddressType;
 import org.hl7.fhir.r4.model.AllergyIntolerance;
 import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Appointment;
 import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
-import org.hl7.fhir.r4.model.CodeableConcept;
-import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Condition;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointUse;
@@ -26,13 +25,15 @@ import org.hl7.fhir.r4.model.HumanName.NameUse;
 import org.hl7.fhir.r4.model.Immunization;
 import org.hl7.fhir.r4.model.MedicationRequest;
 import org.hl7.fhir.r4.model.Observation;
-import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Parameters;
 import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Patient.ContactComponent;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Reference;
-import org.hl7.fhir.r4.model.codesystems.AddressUse;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.primitive.IdDt;
@@ -211,44 +212,137 @@ public class R4 extends ErrorHandler implements FhirInterface {
 
 	@Override
 	public String createPatient(String Payload) {
-		Patient patient = new Patient();
-		patient.addName().setFamily("Romesh").addGiven("Sachin Tendulkar").setUse(NameUse.OFFICIAL);
+		// System.out.print(Payload);
+		JsonObject jObj = stringToJson(Payload);
+		String given = null, middle = null, family = null, line1 = null, city = null, state = null, country = null,
+				zipCode = null;
 
-		Reference OrgReference = new Reference("Organization/619848");
-		patient.addIdentifier().setAssigner(OrgReference);
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+		format.format(new Date());
+		try {
+			JsonElement nameObj = jObj.get("name");
+			for (Map.Entry<String, JsonElement> entry : ((JsonObject) nameObj).entrySet()) {
+				String jsonKey = entry.getKey().toString();
+				switch (jsonKey) {
+				case "given":
+					given = entry.getValue().getAsString();
+					break;
+				case "middle":
+					middle = entry.getValue().getAsString();
+					break;
+				case "family":
+					family = entry.getValue().getAsString();
+					break;
+				case "line1":
+					line1 = entry.getValue().getAsString();
+					break;
+				case "city":
+					city = entry.getValue().getAsString();
+					break;
+				case "state":
+					country = entry.getValue().getAsString();
+					break;
+				case "country":
+					country = entry.getValue().getAsString();
+					break;
+				case "zipCode":
+					zipCode = entry.getValue().getAsString();
+					break;
+				}
+			}
 
-		/*patient.addIdentifier()
-				.setType(new CodeableConcept()
-						.addCoding(new Coding().setCode("SB").setSystem("http://hl7.org/fhir/v2/0203")))
-				.setSystem("http://hl7.org/fhir/sid/us-ssn").setValue("123456789");*/
-		
-		patient.setGender(AdministrativeGender.FEMALE);
-		patient.addAddress().setUse(Address.AddressUse.HOME).addLine("Street name, number, direction & P.O. Box etc.")
-				.setCity("Name of city, town etc.").setState("Sub-unit of country (abbreviations ok)")
-				.setPostalCode("Postal/ZIP code for area").setType(AddressType.PHYSICAL);
-		patient.addTelecom().setUse(ContactPointUse.HOME).setSystem(ContactPointSystem.PHONE)
-				.setValue("(555) 675 5745");
-		patient.addTelecom().setUse(ContactPointUse.HOME).setSystem(ContactPointSystem.PHONE)
-				.setValue("(415) 675 5745");
-		patient.addTelecom().setUse(ContactPointUse.HOME).setSystem(ContactPointSystem.EMAIL).setValue("test@test.com");
-		ContactComponent emergencyContact = new ContactComponent();
-		emergencyContact.addTelecom().setSystem(ContactPointSystem.PHONE).setValue("(111) 675 5745")
-				.setUse(ContactPointUse.HOME);
-		emergencyContact.addRelationship().addCoding().setSystem("http://hl7.org/fhir/ValueSet/v2-0131").setCode("C");
-		emergencyContact
-				.setName(new HumanName().setFamily("Jayaraman").addGiven("Shankar Ganesh").setUse(NameUse.OFFICIAL));
-		patient.addContact(emergencyContact);
+			JsonElement addressObj = jObj.get("address");
+			for (Map.Entry<String, JsonElement> entry : ((JsonObject) addressObj).entrySet()) {
+				String jsonKey = entry.getKey().toString();
+				switch (jsonKey) {
+				case "line1":
+					line1 = entry.getValue().getAsString();
+					break;
+				case "city":
+					city = entry.getValue().getAsString();
+					break;
+				case "state":
+					country = entry.getValue().getAsString();
+					break;
+				case "country":
+					country = entry.getValue().getAsString();
+					break;
+				case "zipCode":
+					zipCode = entry.getValue().getAsString();
+					break;
+				}
+			}
 
-		/*Reference practitionerReference = new Reference("Practitioner/605925");
-		ArrayList<Reference> ref = new ArrayList<>();
-		ref.add(practitionerReference);
-		patient.setGeneralPractitioner(ref);*/
-		
-		String encoded = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patient);
-		MethodOutcome outcome = client.create().resource(patient).encodedJson().execute();
-		System.out.print(outcome.getId());
+			Patient patient = new Patient();
+			patient.addName().setFamily(family).addGiven(given + " " + middle).setUse(NameUse.OFFICIAL);
+
+			String bday = jObj.get("birthDate").getAsString();
+			Date birthDay;
+			try {
+				birthDay = format.parse(bday);
+				patient.setBirthDate(birthDay);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+
+			Reference OrgReference = new Reference("Organization/619848");
+			patient.addIdentifier().setAssigner(OrgReference);
+
+			patient.setGender(AdministrativeGender.FEMALE);
+
+			patient.addAddress().setUse(Address.AddressUse.HOME).addLine(line1).setCity(city).setState(state)
+					.setPostalCode(zipCode).setType(AddressType.PHYSICAL);
+
+			patient.addTelecom().setUse(ContactPointUse.HOME).setSystem(ContactPointSystem.PHONE)
+					.setValue(jObj.get("telecom").getAsString());
+
+			/*
+			 * * patient.addTelecom().setUse(ContactPointUse.HOME).setSystem(
+			 * ContactPointSystem.EMAIL).setValue("test@test.com"); ContactComponent
+			 * emergencyContact = new ContactComponent();
+			 * emergencyContact.addTelecom().setSystem(ContactPointSystem.PHONE).
+			 * setValue("(111) 675 5745") .setUse(ContactPointUse.HOME);
+			 * emergencyContact.addRelationship().addCoding().setSystem(
+			 * "http://hl7.org/fhir/ValueSet/v2-0131").setCode("C"); emergencyContact
+			 * .setName(new
+			 * HumanName().setFamily("Jayaraman").addGiven("Shankar Ganesh").setUse(NameUse.
+			 * OFFICIAL)); patient.addContact(emergencyContact);
+			 */
+
+			/*
+			 * Reference practitionerReference = new Reference("Practitioner/605925");
+			 * ArrayList<Reference> ref = new ArrayList<>(); ref.add(practitionerReference);
+			 * patient.setGeneralPractitioner(ref);
+			 */
+
+			//String encoded = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patient);
+
+			try {
+				MethodOutcome outcome = client.create().resource(patient).encodedJson().execute();
+				return outcome.getOperationOutcome().toString();
+			} catch (NullPointerException e) {
+				return "{\"details\":\"Success\"}";
+			}
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			error(e);
+		}
+		return zipCode;
+
+		//return "test";
+
+		// System.out.print(outcome.getId());
 		// System.out.print(encoded);
-		return outcome.getResource().toString();
+		// return outcome.getResource().toString();
+		// return encoded;
+	}
+
+	private JsonObject stringToJson(String Payload) {
+		JsonParser parser = new JsonParser();
+		JsonElement json = parser.parse(Payload);
+		JsonObject jsonObj = (JsonObject) json;
+		return jsonObj;
 	}
 
 }
