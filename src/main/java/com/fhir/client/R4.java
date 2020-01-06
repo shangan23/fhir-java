@@ -3,10 +3,7 @@ package com.fhir.client;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.Address.AddressType;
 import org.hl7.fhir.r4.model.AllergyIntolerance;
@@ -20,21 +17,17 @@ import org.hl7.fhir.r4.model.DiagnosticReport;
 import org.hl7.fhir.r4.model.DocumentReference;
 import org.hl7.fhir.r4.model.Encounter;
 import org.hl7.fhir.r4.model.Enumerations.AdministrativeGender;
-import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.HumanName.NameUse;
 import org.hl7.fhir.r4.model.Immunization;
 import org.hl7.fhir.r4.model.MedicationRequest;
 import org.hl7.fhir.r4.model.Observation;
 import org.hl7.fhir.r4.model.Parameters;
 import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Patient.ContactComponent;
 import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.Reference;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.rest.api.MethodOutcome;
@@ -155,25 +148,22 @@ public class R4 extends ErrorHandler implements FhirInterface {
 	@Override
 	public String updatePatient(String PatientId, String Payload, Boolean Patch) {
 		try {
-			try {
-				if (Patch.booleanValue()) {
-					Patient patient = client.read().resource(Patient.class).withId(PatientId).execute();
-					AdditionalRequestHeadersInterceptor interceptor = new AdditionalRequestHeadersInterceptor();
-					interceptor.addHeaderValue("If-Match", "W/\"" + patient.getIdElement().getVersionIdPart() + "\"");
-					client.registerInterceptor(interceptor);
-					MethodOutcome outcome = client.patch().withBody(Payload).withId("Patient/" + PatientId).execute();
-					if (outcome.equals(null)) {
-						return "{\"details\":\"Success\"}";
-					}
+			if (Patch.booleanValue()) {
+				Patient patient = client.read().resource(Patient.class).withId(PatientId).execute();
+				AdditionalRequestHeadersInterceptor interceptor = new AdditionalRequestHeadersInterceptor();
+				interceptor.addHeaderValue("If-Match", "W/\"" + patient.getIdElement().getVersionIdPart() + "\"");
+				client.registerInterceptor(interceptor);
+				MethodOutcome outcome = client.patch().withBody(Payload).withId("Patient/" + PatientId).execute();
+				try {
 					return outcome.getOperationOutcome().toString();
+				} catch (NullPointerException e) {
+					return success();
 				}
-			} catch (NullPointerException e) {
-				return "{\"details\":\"Success\"}";
 			}
 		} catch (Exception e) {
 			return error(e);
 		}
-		return "{\"details\":\"something went wrong\"}";
+		return somethingWrong();
 	}
 
 	private String formatOutput(Bundle results) {
@@ -233,21 +223,6 @@ public class R4 extends ErrorHandler implements FhirInterface {
 				case "family":
 					family = entry.getValue().getAsString();
 					break;
-				case "line1":
-					line1 = entry.getValue().getAsString();
-					break;
-				case "city":
-					city = entry.getValue().getAsString();
-					break;
-				case "state":
-					country = entry.getValue().getAsString();
-					break;
-				case "country":
-					country = entry.getValue().getAsString();
-					break;
-				case "zipCode":
-					zipCode = entry.getValue().getAsString();
-					break;
 				}
 			}
 
@@ -262,7 +237,7 @@ public class R4 extends ErrorHandler implements FhirInterface {
 					city = entry.getValue().getAsString();
 					break;
 				case "state":
-					country = entry.getValue().getAsString();
+					state = entry.getValue().getAsString();
 					break;
 				case "country":
 					country = entry.getValue().getAsString();
@@ -288,9 +263,14 @@ public class R4 extends ErrorHandler implements FhirInterface {
 			Reference OrgReference = new Reference("Organization/619848");
 			patient.addIdentifier().setAssigner(OrgReference);
 
-			patient.setGender(AdministrativeGender.FEMALE);
+			if (jObj.get("gender").getAsString().equals("male")) {
+				patient.setGender(AdministrativeGender.MALE);
+			} else if (jObj.get("gender").getAsString().equals("female")) {
+				patient.setGender(AdministrativeGender.FEMALE);
+			}
 
 			patient.addAddress().setUse(Address.AddressUse.HOME).addLine(line1).setCity(city).setState(state)
+					.setCountry(country)
 					.setPostalCode(zipCode).setType(AddressType.PHYSICAL);
 
 			patient.addTelecom().setUse(ContactPointUse.HOME).setSystem(ContactPointSystem.PHONE)
@@ -306,36 +286,26 @@ public class R4 extends ErrorHandler implements FhirInterface {
 			 * "http://hl7.org/fhir/ValueSet/v2-0131").setCode("C"); emergencyContact
 			 * .setName(new
 			 * HumanName().setFamily("Jayaraman").addGiven("Shankar Ganesh").setUse(NameUse.
-			 * OFFICIAL)); patient.addContact(emergencyContact);
-			 */
-
-			/*
-			 * Reference practitionerReference = new Reference("Practitioner/605925");
+			 * OFFICIAL)); patient.addContact(emergencyContact); Reference
+			 * practitionerReference = new Reference("Practitioner/605925");
 			 * ArrayList<Reference> ref = new ArrayList<>(); ref.add(practitionerReference);
-			 * patient.setGeneralPractitioner(ref);
+			 * patient.setGeneralPractitioner(ref); String encoded =
+			 * ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patient);
+			 * System.out.print(encoded);
+			 * 
 			 */
 
-			//String encoded = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(patient);
+			MethodOutcome outcome = client.create().resource(patient).encodedJson().execute();
 
 			try {
-				MethodOutcome outcome = client.create().resource(patient).encodedJson().execute();
 				return outcome.getOperationOutcome().toString();
 			} catch (NullPointerException e) {
-				return "{\"details\":\"Success\"}";
+				return success();
 			}
 
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			error(e);
+			return error(e);
 		}
-		return zipCode;
-
-		//return "test";
-
-		// System.out.print(outcome.getId());
-		// System.out.print(encoded);
-		// return outcome.getResource().toString();
-		// return encoded;
 	}
 
 	private JsonObject stringToJson(String Payload) {

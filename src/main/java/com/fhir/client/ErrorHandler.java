@@ -9,4 +9,12 @@ public class ErrorHandler {
 		}
 		return "{ \"details\":\"" + error + "\"}";
 	}
+
+	public String success() {
+		return "{\"details\":\"Success\"}";
+	}
+
+	public String somethingWrong() {
+		return "{\"details\":\"something went wrong\"}";
+	}
 };
