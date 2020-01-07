@@ -150,6 +150,18 @@ public class Dstu3 implements FhirInterface {
 		return null;
 	}
 
+	@Override
+	public String addPatientAllergy(String PatientId,String Payload) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String addPatientAppointment(String PatientId, String Payload) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 
 }

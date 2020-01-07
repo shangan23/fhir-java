@@ -4,12 +4,18 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+
+import org.hl7.fhir.dstu3.model.Narrative;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.Address.AddressType;
 import org.hl7.fhir.r4.model.AllergyIntolerance;
+import org.hl7.fhir.r4.model.AllergyIntolerance.AllergyIntoleranceCategory;
+import org.hl7.fhir.r4.model.AllergyIntolerance.AllergyIntoleranceClinicalStatus;
+import org.hl7.fhir.r4.model.AllergyIntolerance.AllergyIntoleranceVerificationStatus;
 import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.Appointment;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Condition;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointUse;
@@ -201,6 +207,42 @@ public class R4 extends ErrorHandler implements FhirInterface {
 	}
 
 	@Override
+	public String addPatientAllergy(String PatientId, String Payload) {
+		try {
+			//JsonObject jObj = stringToJson(Payload);
+			String patient = "Patient/" + PatientId;
+
+			AllergyIntolerance NewAllergy = new AllergyIntolerance();
+			NewAllergy.setClinicalStatus(AllergyIntoleranceClinicalStatus.ACTIVE);
+			NewAllergy.getCode().addCoding().setSystem("http://terminology.hl7.org/CodeSystem/allergyintolerance-clinical").setCode("resolved");
+			NewAllergy.setVerificationStatus(AllergyIntoleranceVerificationStatus.CONFIRMED);
+			NewAllergy.getCode().addCoding().setSystem("http://terminology.hl7.org/CodeSystem/allergyintolerance-verification").setCode("confirmed");
+			NewAllergy.addCategory(AllergyIntoleranceCategory.ENVIRONMENT);
+			NewAllergy.getCode().addCoding().setSystem("http://snomed.info/sct").setCode("377002").setDisplay("Sparteine");
+			NewAllergy.getPatient().setReference(patient);//.setDisplay(patient);
+			/*
+			 * AdditionalRequestHeadersInterceptor interceptor = new
+			 * AdditionalRequestHeadersInterceptor(); interceptor.addHeaderValue("If-Match",
+			 * "W/\"" + Allergy.getIdElement().getVersionIdPart() + "\"");
+			 * client.registerInterceptor(interceptor);
+			 */
+			
+			String encoded = ctx.newJsonParser().setPrettyPrint(true).encodeResourceToString(NewAllergy);
+			System.out.print(encoded);
+
+			MethodOutcome outcome = client.create().resource(NewAllergy).encodedJson().execute();
+			try {
+				return outcome.getOperationOutcome().getMeta().toString();
+			} catch (NullPointerException e) {
+				return success();
+			}
+		} catch (Exception e) {
+			return error(e);
+		}
+
+	}
+
+	@Override
 	public String createPatient(String Payload) {
 		// System.out.print(Payload);
 		JsonObject jObj = stringToJson(Payload);
@@ -270,8 +312,7 @@ public class R4 extends ErrorHandler implements FhirInterface {
 			}
 
 			patient.addAddress().setUse(Address.AddressUse.HOME).addLine(line1).setCity(city).setState(state)
-					.setCountry(country)
-					.setPostalCode(zipCode).setType(AddressType.PHYSICAL);
+					.setCountry(country).setPostalCode(zipCode).setType(AddressType.PHYSICAL);
 
 			patient.addTelecom().setUse(ContactPointUse.HOME).setSystem(ContactPointSystem.PHONE)
 					.setValue(jObj.get("telecom").getAsString());
@@ -313,6 +354,40 @@ public class R4 extends ErrorHandler implements FhirInterface {
 		JsonElement json = parser.parse(Payload);
 		JsonObject jsonObj = (JsonObject) json;
 		return jsonObj;
+	}
+
+	@Override
+	public String addPatientAppointment(String PatientId, String Payload) {
+		try {
+			JsonObject jObj = stringToJson(Payload);
+			String patient = "Patient/" + PatientId;
+			
+			Appointment appt = new Appointment();
+			appt.addSlot();
+
+			AllergyIntolerance NewAllergy = new AllergyIntolerance();
+			NewAllergy.getAsserter().setReference(patient);
+			NewAllergy.setClinicalStatus(AllergyIntoleranceClinicalStatus.ACTIVE);
+			NewAllergy.setVerificationStatus(AllergyIntoleranceVerificationStatus.CONFIRMED);
+			NewAllergy.addCategory(AllergyIntoleranceCategory.ENVIRONMENT);
+			NewAllergy.getCode().addCoding().setSystem("http://snomed.info/sct").setCode("AA");
+
+			/*
+			 * AdditionalRequestHeadersInterceptor interceptor = new
+			 * AdditionalRequestHeadersInterceptor(); interceptor.addHeaderValue("If-Match",
+			 * "W/\"" + Allergy.getIdElement().getVersionIdPart() + "\"");
+			 * client.registerInterceptor(interceptor);
+			 */
+
+			MethodOutcome outcome = client.create().resource(NewAllergy).execute();
+			try {
+				return outcome.getOperationOutcome().getMeta().toString();
+			} catch (NullPointerException e) {
+				return success();
+			}
+		} catch (Exception e) {
+			return error(e);
+		}
 	}
 
 }
